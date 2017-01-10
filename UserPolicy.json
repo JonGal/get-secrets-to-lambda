@@ -1,0 +1,15 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1459445603000",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::<YOUR ACCOUNT>:role/<YOUR LAMBDA EXECUTION ROLE NAME>"
+            ]
+        }
+    ]
+}
