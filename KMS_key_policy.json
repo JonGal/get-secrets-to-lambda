@@ -1,0 +1,12 @@
+{
+      "Sid": "Allow use of the key",
+      "Effect": "Allow",
+      "Principal": {
+      "AWS": "<ARN_Of_the_Lmabda_Execution_Role>"
+      },
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ],
+      "Resource": "<ARN_of_the_key>"
+},
