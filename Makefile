@@ -5,6 +5,8 @@ LAMBDA_PROFILE=Matt-Lab-Dev
 #Make sure this is correct for KMS and Lambda
 #Keep them the same region for performance!
 REGION=us-west-2
+
+#Deliverable
 SRC=lambda-mysql.py
 LIBS=pymysql
 ZIP=zip
@@ -17,6 +19,8 @@ ENC=mysql_access.cfg.enc
 BUCKET=ndh-secrets
 #The Object the secrets are stored in
 KEY=lambda/$(ENC)
+
+#Flags
 #Flag for updating environment variables
 ENV_DELIVERED=env_delivered
 #Flag for updating encrypted objects
