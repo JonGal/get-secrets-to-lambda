@@ -83,8 +83,9 @@ def get_config(section_name):
     for name,value in config.items(section_name):
         os.environ[name] = value
     #Set flag that we got the object
-    eTag = response['ETag']
-    os.environ['Loaded'] = '{ "Object": "'+ bucket + '/' + key + '", "ETag": "' + eTag + '"}'
+    loaded['ETag'] = response['ETag']
+    loaded['Object'] =  bucket + '/' + key
+    os.environ['Loaded'] = json.dumps(loader)
     
     #For debugging/auditing
     print(os.environ['Loaded'])
