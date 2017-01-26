@@ -33,7 +33,7 @@ $(ENC_DELIVERED): $(ENC)
 	aws s3 cp $(ENC) s3://$(BUCKET)/$(KEY)  --profile $(SECURITY_PROFILE) --region $(REGION) && touch $(ENC_DELIVERED)
 
 $(ENV_DELIVERED): Makefile
-	aws lambda update-function-configuration --function-name lambda-mysql --environment 'Variables={Bucket=$(BUCKET),Key=$(KEY)}'  --profile $(LAMBDA_PROFILE) --region $(REGION) || touch $(ENV_DELIVERED)
+	aws lambda update-function-configuration --function-name lambda-mysql --environment 'Variables={Bucket=$(BUCKET),Key=$(KEY)}'  --profile $(LAMBDA_PROFILE) --region $(REGION) && touch $(ENV_DELIVERED)
 
 $(LIBS): 
 	pip install $@ -t .
@@ -42,7 +42,7 @@ $(ZIPFILE) : $(SRC) $(LIBS)
 	$(ZIP) $(ZIPFILE) $(ZIPOPTIONS) $(SRC) $(LIBS)
 
 $(LAMBDA_DELIVERED): $(ZIPFILE)
-	aws lambda update-function-code --function-name lambda-mysql --zip-file fileb://$(ZIPFILE) --profile $(LAMBDA_PROFILE) --region $(REGION) || touch $(LAMBDA_DELIVERED)
+	aws lambda update-function-code --function-name lambda-mysql --zip-file fileb://$(ZIPFILE) --profile $(LAMBDA_PROFILE) --region $(REGION) && touch $(LAMBDA_DELIVERED)
 
 $(LAMBDA): $(ZIPFILE) 
 
