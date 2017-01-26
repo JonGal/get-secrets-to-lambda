@@ -6,6 +6,13 @@ LAMBDA_PROFILE=Matt-Lab-Dev
 #Keep them the same region for performance!
 REGION=us-west-2
 
+#The bucket the secretes are stored in
+# Don't forget to set the Bucket policy
+# to allow access to the Role the Lambda uses
+BUCKET=ndh-secrets
+#The Object the secrets are stored in
+KEY=lambda/$(ENC)
+
 #Deliverable
 SRC=lambda-mysql.py
 LIBS=pymysql
@@ -15,10 +22,7 @@ ZIPFILE=lambda-mysql.zip
 LAMBDA=lambda-mysql
 CFG=mysql_access.cfg
 ENC=mysql_access.cfg.enc
-#THe bucket the secretes are stored in
-BUCKET=ndh-secrets
-#The Object the secrets are stored in
-KEY=lambda/$(ENC)
+
 
 #Flags
 #Flag for updating environment variables
