@@ -4,6 +4,7 @@ import boto3
 import ConfigParser
 import base64
 import pymysql
+import json
 import os
 import io
 import sys
@@ -19,7 +20,13 @@ def lambda_handler(event, context):
     #Use this as a semaphore to ensure we have the informaiton
     #Log it to audit what lambda is reading in
     if 'Loaded' in os.environ:
-        print (os.environ['Loaded'])
+        cur_cfg = json.loads(os.environ['Loaded'])
+        meta_response = s3.head_object(Bucket=bucket, Key=key, IfMatch=cur_cfg['ETag'])
+        if meta_response:
+            print (meta_response)
+            print (os.environ['Loaded'])
+        else:
+            get_config(section_name='mysql')
     else:
         get_config(section_name='mysql')
 
@@ -75,7 +82,9 @@ def get_config(section_name):
     config.readfp(io.BytesIO(config_text))
     for name,value in config.items(section_name):
         os.environ[name] = value
-    os.environ['Loaded'] = bucket + "/" + key
+    #Set flag that we got the object
+    eTag = response['ETag']
+    os.environ['Loaded'] = '{ "Object": "'+ bucket + '/' + key + '", "ETag": "' + eTag + '"}'
     
     #For debugging/auditing
     print(os.environ['Loaded'])
