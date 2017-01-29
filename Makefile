@@ -47,7 +47,7 @@ $(LIBS):
 	pip install $@ -t .
 
 $(ZIPFILE) : $(SRC) $(LIBS)
-	$(ZIP) $(ZIPFILE) $(ZIPOPTIONS) $(SRC) $(LIBS)
+	$(ZIP) $(ZIPOPTIONS) $(ZIPFILE) $(SRC) $(LIBS)
 
 $(LAMBDA_DELIVERED): $(ZIPFILE)
 	aws lambda update-function-code --function-name lambda-mysql --zip-file fileb://$(ZIPFILE) --profile $(LAMBDA_PROFILE) --region $(REGION) && touch $(LAMBDA_DELIVERED)
