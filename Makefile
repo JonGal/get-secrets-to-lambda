@@ -1,6 +1,6 @@
 #Separate CLI profiles for the security account
 # and the account deploying the Lambda
-SECURITY_PROFILE=default
+SECURITY_PROFILE=NDH_Security
 LAMBDA_PROFILE=Matt-Lab-Dev
 #Make sure this is correct for KMS and Lambda
 #Keep them the same region for performance!
@@ -9,7 +9,7 @@ REGION=us-west-2
 #The bucket the secretes are stored in
 # Don't forget to set the Bucket policy
 # to allow access to the Role the Lambda uses
-BUCKET=ndh-secrets
+BUCKET=ndh-secrets-bucket
 #The Object the secrets are stored in
 KEY=lambda/$(ENC)
 
@@ -22,6 +22,7 @@ ZIPFILE=lambda-mysql.zip
 LAMBDA=lambda-mysql
 CFG=mysql_access.cfg
 ENC=mysql_access.cfg.enc
+KEY_ID=arn:aws:kms:us-west-2:072198522266:key/c216d1f7-025f-4c58-9f2c-86822aadf20d
 
 
 #Flags
@@ -35,7 +36,7 @@ LAMBDA_DELIVERED=lambda_delivered
 
 
 $(ENC): $(CFG)
-	aws kms encrypt --key-id arn:aws:kms:us-west-2:323826331358:key/7f6907a1-c040-4d47-9807-a28411333906 --plaintext fileb://$? --output text --query CiphertextBlob --profile $(SECURITY_PROFILE) --region $(REGION) | base64 --decode > $@
+	aws kms encrypt --key-id $(KEY_ID) --plaintext fileb://$? --output text --query CiphertextBlob --profile $(SECURITY_PROFILE) --region $(REGION) | base64 --decode > $@ || rm $(ENC)
 
 $(ENC_DELIVERED): $(ENC)
 	aws s3 cp $(ENC) s3://$(BUCKET)/$(KEY)  --profile $(SECURITY_PROFILE) --region $(REGION) && touch $(ENC_DELIVERED)
@@ -47,7 +48,7 @@ $(LIBS):
 	pip install $@ -t .
 
 $(ZIPFILE) : $(SRC) $(LIBS)
-	$(ZIP) $(ZIPOPTIONS) $(ZIPFILE) $(SRC) $(LIBS)
+	$(ZIP) $(ZIPFILE) $(ZIPOPTIONS) $(SRC) $(LIBS)
 
 $(LAMBDA_DELIVERED): $(ZIPFILE)
 	aws lambda update-function-code --function-name lambda-mysql --zip-file fileb://$(ZIPFILE) --profile $(LAMBDA_PROFILE) --region $(REGION) && touch $(LAMBDA_DELIVERED)
